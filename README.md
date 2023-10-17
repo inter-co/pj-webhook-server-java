@@ -52,11 +52,22 @@ Observe que o password utilizado nesse caso foi 123456. Caso deseje, esse valor 
 ### Importando a CA na truststore
 
 Esse passo serve para que o seu servidor passe a confiar nas requisições realizadas pelo Inter.
+****
+**Atenção:**
+
+Caso deseje desabilitar esse comportamento, e não exigir uma autenticação no envio do callback, você deve alterar o método `initChannel` da classe `HttpServerInitializer`.
+```java
+//Alterar de 'true' para false
+sslEngine.setNeedClientAuth(false);
+```
+Dessa forma qualquer requisição realizada para o seu endpoint será aceita, independente da origem. Sendo assim, `não recomendamos essa configuração!`
+****
+
 Após o donwload do certificado webhook [Como configurar](https://developers.inter.co/docs/webhooks/como-config-webhooks), descompacte o arquivo baixado.
 
 Na pasta aonde o arquivo ca.crt execute o comando:
 ```
-openssl pkcs12 -export -out server.p12 -inkey private.key -in certchain.crt -passout pass:123456
+keytool -import -trustcacerts -noprompt -alias ca -file ca.crt -keystore truststore.jks
 ```
 Observe que utilizamos fornecemos aqui também uma senha, e utilizamos como exemplo 123456
 
@@ -135,3 +146,5 @@ kill ID_PROCESSO
 Aonde o ID_PROCESSO deve ser substituído pelo ID obtido no passo anterior.
 
 Com isso a execução do .jar será encerrada.
+
+
